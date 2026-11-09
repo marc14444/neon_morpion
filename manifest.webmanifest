@@ -1,0 +1,19 @@
+{
+  "name": "NEON MORPION — Cyberpunk Arcade",
+  "short_name": "NeonMorpion",
+  "description": "L'arène de morpion futuriste avec mode Infini Ghost, Chrono Blitz et multijoueur P2P.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#050710",
+  "theme_color": "#55f6ff",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
+
