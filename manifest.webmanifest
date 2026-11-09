@@ -1,12 +1,16 @@
 {
-  "name": "NEON MORPION — Cyberpunk Arcade",
+  "id": "/neon-morpion/",
+  "name": "NEON MORPION — Cyberpunk Arcade & AR",
   "short_name": "NeonMorpion",
-  "description": "L'arène de morpion futuriste avec mode Infini Ghost, Chrono Blitz et multijoueur P2P.",
+  "description": "L'arène de morpion futuriste avec mode Tactique 3 pions libre, Chrono Blitz, succès ELO et multijoueur P2P en direct.",
   "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#050710",
   "theme_color": "#55f6ff",
   "orientation": "portrait-primary",
+  "lang": "fr",
+  "categories": ["games", "arcade", "entertainment"],
   "icons": [
     {
       "src": "icons/icon.svg",
@@ -16,4 +20,3 @@
     }
   ]
 }
-

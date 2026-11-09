@@ -1,8 +1,8 @@
 // ==========================================
-// SERVICE WORKER — NEON MORPION (PWA Offline)
+// SERVICE WORKER — NEON MORPION (PWA v2.1.0)
 // ==========================================
 
-const CACHE_NAME = 'neon-morpion-v1';
+const CACHE_NAME = 'neon-morpion-v2.1.0';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -35,30 +35,41 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Ignore les requêtes WebRTC PeerJS ou externes pour le cache statique
+  // Ignore les requêtes WebRTC PeerJS ou tierces (CDN extern)
   if (!event.request.url.startsWith(self.location.origin)) {
     return;
   }
 
+  // Pour la page HTML principale (navigation) : Network First avec fallback Cache
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const responseClone = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
+          }
+          return networkResponse;
+        })
+        .catch(() => caches.match('./index.html'))
+    );
+    return;
+  }
+
+  // Pour les autres assets (CSS, JS, SVG) : Stale-While-Revalidate
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-      return fetch(event.request).then((networkResponse) => {
-        if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
+      const fetchPromise = fetch(event.request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+            const responseClone = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
+          }
           return networkResponse;
-        }
-        const responseToCache = networkResponse.clone();
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseToCache);
-        });
-        return networkResponse;
-      });
-    }).catch(() => {
-      // Fallback si offline et non trouvé dans le cache
-      return caches.match('./index.html');
+        })
+        .catch(() => cachedResponse);
+
+      return cachedResponse || fetchPromise;
     })
   );
 });
-
